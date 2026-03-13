@@ -4,9 +4,9 @@ from src.config.data_base import db
 
 class UserService:
     @staticmethod
-    def create_user(name, cnpj, email, celular, password):
-        user = User(name=name, cnpj=cnpj, email=email, celular=celular, password=password)        
+    def create_user(name, cnpj, email, celular, password, code):
+        user = User(name=name, cnpj=cnpj, email=email, celular=celular, password=password, code=code)
         db.session.add(user)
         db.session.commit()       
         
-        return UserDomain(user.id, user.name, user.cnpj, user.email, user.celular, user.status)
+        return UserDomain(user.id, user.name, user.cnpj, user.email, user.celular, user.status, user.code)
