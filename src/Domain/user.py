@@ -1,12 +1,18 @@
+import random
+
+
 class UserDomain:
-    def __init__(self, id, name, cnpj, email, celular, status):
+    def __init__(self, id, name, cnpj, email, celular, status, activation_code):
         self.id = id
         self.name = name
         self.cnpj = cnpj
         self.email = email
         self.celular = celular
         self.status = status
-    
+        self.activation_code = activation_code
+        
+        
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -14,5 +20,6 @@ class UserDomain:
             "cnpj": self.cnpj,
             "email": self.email,
             "celular": self.celular,
-            "status": self.status
+            "status": self.status,
+            "activation_code": self.activation_code
         }
