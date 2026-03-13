@@ -22,5 +22,4 @@ class UserDomain:
             "celular": self.celular,
             "status": self.status,
             "activation_code": self.activation_code
-
         }

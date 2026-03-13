@@ -10,3 +10,13 @@ class UserService:
         db.session.commit()       
         
         return UserDomain(user.id, user.name, user.cnpj, user.email, user.celular, user.status, user.code)
+    
+
+    @staticmethod
+    def activate_user(cnpj, activation_code):
+        user = db.session.query(User).filter(User.cnpj == cnpj, User.code == activation_code).first()
+        if user:
+            user.status = "Ativo"
+            db.session.commit()
+            return True
+        return False

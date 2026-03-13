@@ -1,5 +1,3 @@
-WHATS APP
-
 import os
 import random
 from twilio.rest import Client
@@ -14,13 +12,12 @@ class WhatsAppService:
         self.from_number = os.getenv('TWILIO_WHATSAPP_NUMBER')
         self.client = Client(self.account_sid, self.auth_token)
     
-
-    def generate_code(self):
-        token_codigo = str(random.randint(0000, 9999))
+    @staticmethod
+    def generate_code():
+        token_codigo = str(random.randint(1000, 9999))
         print(f'Codigo gerado: {token_codigo}')
         return token_codigo
     
-
     def send_activation_message(self, to_number, code):
         message = self.client.messages.create(
             body=f'Seu código de ativação é: {code}',

@@ -13,6 +13,6 @@ def init_routes(app):
         return UserController.register_user()
     
 
-    @app.route('/users/activate', methods=['POST'])
+    @app.route('/user/activate', methods=['POST'])
     def activate_user():
         return UserController.activate_user()
