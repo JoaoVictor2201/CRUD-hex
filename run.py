@@ -2,9 +2,11 @@ import time
 from flask import Flask
 from src.config.data_base import init_db
 from src.routes import init_routes
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     init_db(app)
     init_routes(app)
     return app
@@ -15,10 +17,6 @@ def start_app_with_retry():
         try:
             print(f"Tentando conectar ao MySQL com SQLAlchemy... ({11 - retries}/10)")
             app = create_app()
-            
-            # ATENÇÃO: Se o seu init_db não força a criação das tabelas, 
-            # o erro pode só estourar mais tarde. O ideal é que o init_db 
-            # já teste a conexão.
             
             print("Conectado com sucesso e aplicação inicializada!")
             return app
