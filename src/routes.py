@@ -1,8 +1,6 @@
 import os
 from src.Application.Controllers.user_controller import UserController
-from flask import jsonify, make_response, request
-SECRET_KEY = os.getenv("SECRET_KEY", "sua-chave-super-secreta")
-
+from flask import jsonify, make_response
 
 def init_routes(app):    
     @app.route('/api', methods=['GET'])
@@ -23,7 +21,6 @@ def init_routes(app):
     def activate_user():
         return UserController.activate_user()
 
-    @app.route('/user/login', methods=["POST"])
+    @app.route('/login', methods=["POST"])
     def login():
-        data = request.get_json()
         return UserController.login()

@@ -5,8 +5,6 @@ from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
 from src.Infrastructure.http.whats_app import WhatsAppService
 
-SECRET_KEY = os.getenv("SECRET_KEY", "sua-chave-super-secreta")
-
 class UserController:
     @staticmethod
     def register_user():
