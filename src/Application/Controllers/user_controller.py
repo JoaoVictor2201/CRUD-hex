@@ -1,8 +1,11 @@
 import code
-
+import jwt
+import os
 from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
 from src.Infrastructure.http.whats_app import WhatsAppService
+
+SECRET_KEY = os.getenv("SECRET_KEY", "sua-chave-super-secreta")
 
 class UserController:
     @staticmethod
@@ -29,8 +32,10 @@ class UserController:
             "usuarios": user.to_dict()
         }), 201)
     
-    def activate_user():
-        data = request.get_json()
+    @staticmethod
+    def activate_user(data=None):
+        if data is None:
+            data = request.get_json()
         cnpj = data.get('cnpj')
         activation_code = data.get('activation_code')
 
@@ -42,3 +47,32 @@ class UserController:
             return make_response(jsonify({"mensagem": "Conta ativada com sucesso"}), 200)
         else:
             return make_response(jsonify({"erro": "Código de ativação inválido ou vendedor não encontrado"}), 400)
+
+    @staticmethod
+    def login(data=None):
+        if data is None:
+            data = request.get_json()
+
+        cnpj = data.get('cnpj')
+        password = data.get('password') 
+
+        if not cnpj or not password:
+            return make_response(jsonify({"erro": "CNPJ e senha são obrigatórios"}), 400)
+
+        result = UserService.authenticate_user(cnpj, password)
+        
+        if result["success"]:
+            return make_response(jsonify({
+                "mensagem": "Login realizado com sucesso",
+                "token": result["token"]
+            }), 200)
+        else:
+            return make_response(jsonify({"erro": result["message"]}), 401)
+
+    @staticmethod
+    def get_all_users():
+        users = UserService.get_all_users()
+        return make_response(jsonify({
+            "mensagem": "Usuários encontrados com sucesso",
+            "usuarios": [user.to_dict() for user in users]
+        }), 200)

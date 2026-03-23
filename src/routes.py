@@ -1,5 +1,8 @@
+import os
 from src.Application.Controllers.user_controller import UserController
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
+SECRET_KEY = os.getenv("SECRET_KEY", "sua-chave-super-secreta")
+
 
 def init_routes(app):    
     @app.route('/api', methods=['GET'])
@@ -8,11 +11,19 @@ def init_routes(app):
             "mensagem": "API - OK; Docker - Up",
         }), 200)
     
+    @app.route('/users', methods=['GET'])
+    def get_all_users():
+        return UserController.get_all_users()
+    
     @app.route('/user', methods=['POST'])
     def register_user():
         return UserController.register_user()
-    
 
     @app.route('/user/activate', methods=['POST'])
     def activate_user():
         return UserController.activate_user()
+
+    @app.route('/user/login', methods=["POST"])
+    def login():
+        data = request.get_json()
+        return UserController.login()
