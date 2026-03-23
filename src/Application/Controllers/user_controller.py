@@ -31,11 +31,9 @@ class UserController:
             "mensagem": "User salvo com sucesso",
             "usuarios": user.to_dict()
         }), 201)
-    
-    @staticmethod
-    def activate_user(data=None):
-        if data is None:
-            data = request.get_json()
+
+    def activate_user():
+        data = request.get_json()
         cnpj = data.get('cnpj')
         activation_code = data.get('activation_code')
 
