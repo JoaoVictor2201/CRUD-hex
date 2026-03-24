@@ -16,7 +16,7 @@ class UserController:
         celular = data.get('celular')
         password = data.get('senha')
 
-        if not name or not email or not password:
+        if not name or not email or not password or not celular or not cnpj:
             return make_response(jsonify({"erro": "Missing required fields"}), 400)
 
         code = WhatsAppService.generate_code()
@@ -45,10 +45,9 @@ class UserController:
             return make_response(jsonify({"erro": "Código de ativação inválido ou vendedor não encontrado"}), 400)
 
     @staticmethod
-    def login(data=None):
-        if data is None:
-            data = request.get_json()
-
+    def login():
+        data = request.get_json()
+        
         cnpj = data.get('cnpj')
         password = data.get('password') 
 
@@ -72,3 +71,24 @@ class UserController:
             "mensagem": "Usuários encontrados com sucesso",
             "usuarios": [user.to_dict() for user in users]
         }), 200)
+    
+    @staticmethod
+    def update_user():
+        token = request.headers.get('Authorization')
+        data = request.get_json()
+        if not token:
+                return make_response(jsonify({"erro": "Token não fornecido"}), 401)
+        if not data:
+                return make_response(jsonify({"erro": "Dados para atualização não fornecidos"}), 400)
+        
+        token_validation = UserService.validate_token(token)
+        if not token_validation["success"]:
+            return make_response(jsonify({"erro": token_validation["message"]}), 401)
+            
+        user_id = token_validation["user_id"]
+        result = UserService.update_user(user_id, data)
+        
+        if result["success"]:
+                return make_response(jsonify({"mensagem": result["message"]}), 200)
+        else:
+                return make_response(jsonify({"erro": result["message"]}), 400)
