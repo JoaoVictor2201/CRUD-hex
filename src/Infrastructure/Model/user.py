@@ -7,8 +7,9 @@ class User(db.Model):
     cnpj = db.Column(db.String(20), unique=True, nullable=False) # Nova coluna
     email = db.Column(db.String(100), unique=True, nullable=False)
     celular = db.Column(db.String(20), nullable=False) # Nova coluna
-    password = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(20), default="Inativo") # Nova coluna com valor padrão
+    password = db.Column(db.String(255), nullable=False)
+    status = db.Column(db.String(20), default="Inativo")
+    code = db.Column(db.String(20), unique=True, nullable=False) # Nova coluna com valor padrão
 
     def to_dict(self):
         return {
@@ -17,5 +18,6 @@ class User(db.Model):
             "cnpj": self.cnpj,
             "email": self.email,
             "celular": self.celular,
-            "status": self.status
+            "status": self.status,
+
         }
