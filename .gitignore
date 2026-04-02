@@ -3,11 +3,18 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environment
+# Virtual environments
 venv/
 env/
 .venv/
 .env
+
+# Banco de Dados Local Docker (Resolve o erro do mysql.sock)
+db/
+
+# Frontend (React/Vite)
+frontend/node_modules/
+frontend/dist/
 
 # SQLite database
 *.db
@@ -17,7 +24,11 @@ env/
 .idea/
 
 # OS
+<<<<<<< HEAD
+.DS_Store
+=======
 .DS_Store
 
 # Database volume
 db/
+>>>>>>> dev
