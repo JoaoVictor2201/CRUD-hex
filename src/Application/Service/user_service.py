@@ -55,3 +55,39 @@ class UserService:
         
         return {"success": True, "token": token}
 
+    @staticmethod
+    def validate_token(token):
+        if not token or not token.startswith("Bearer "):
+            return {"success": False, "message": "Token não fornecido ou mal formatado"}
+        
+        token = token.split(" ")[1]
+        try:
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        
+            return {
+                "success": True, 
+                "user_id": data.get("user_id"),
+            }
+        
+        except Exception as e:
+            return {"success": False, "message": f"Erro: {e}"}
+
+    @staticmethod
+    def update_user(user_id, data_to_update):
+        user = db.session.query(User).filter(User.id == user_id).first()
+        if not user:
+            return {"success": False, "message": "Usuário não encontrado."}
+        
+        if 'nome' in data_to_update:
+            user.name = data_to_update['nome']
+        if 'email' in data_to_update:
+            user.email = data_to_update['email']
+        if 'celular' in data_to_update:
+            user.celular = data_to_update['celular']
+        
+        try:
+            db.session.commit()
+            return {"success": True, "message": "Informações atualizadas com sucesso."}
+        except Exception as e:
+            db.session.rollback()
+            return {"success": False, "message": f"Erro ao atualizar o banco de dados: {str(e)}"}

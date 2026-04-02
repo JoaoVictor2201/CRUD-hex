@@ -20,6 +20,5 @@ class UserDomain:
             "cnpj": self.cnpj,
             "email": self.email,
             "celular": self.celular,
-            "status": self.status,
-            "activation_code": self.activation_code
+            "status": self.status
         }
