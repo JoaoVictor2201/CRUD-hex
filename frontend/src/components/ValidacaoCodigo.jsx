@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 
-function ValidacaoCodigo() {
+function ValidacaoCodigo({ onValidationSuccess }) {
   const [codigo, setCodigo] = useState('');
   const [mensagem, setMensagem] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setMensagem('Validando...'); // Feedback visual rápido para o usuário
+    setMensagem('Validando...');
 
-    // 1. Resgata o CNPJ que salvamos na memória na tela de cadastro
     const cnpjSalvo = localStorage.getItem('cnpjAtivacao');
 
-    // Se a pessoa cair nessa tela de paraquedas sem ter cadastrado antes:
     if (!cnpjSalvo) {
       setMensagem('Erro: Nenhum CNPJ encontrado. Por favor, faça o cadastro primeiro.');
       return;
     }
 
     try {
-      // 2. Faz a requisição POST para a sua API Python
       const resposta = await fetch('http://localhost:5000/user/activate', {
         method: 'POST',
         headers: {
@@ -32,13 +29,11 @@ function ValidacaoCodigo() {
 
       const dados = await resposta.json();
 
-      // 3. Trata a resposta com base no que o Python devolveu
       if (resposta.ok) {
         setMensagem('Código validado com sucesso! Conta ativada.');
-        // Limpa a memória pois já ativamos com sucesso
         localStorage.removeItem('cnpjAtivacao'); 
+        if (onValidationSuccess) onValidationSuccess();
       } else {
-        // Mostra o erro exato que veio do seu back-end ou um erro genérico
         setMensagem(`Erro: ${dados.erro || 'Código inválido. Tente novamente.'}`);
       }
     } catch (erro) {
@@ -48,20 +43,20 @@ function ValidacaoCodigo() {
   };
 
   return (
-    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '400px', margin: '20px auto', fontFamily: 'sans-serif' }}>
+    <div style={{ maxWidth: '400px', margin: '20px auto', fontFamily: 'sans-serif' }}>
       <h2 style={{ textAlign: 'center' }}>Validar Código</h2>
       <p style={{ textAlign: 'center' }}>Digite o código enviado para o seu WhatsApp.</p>
       
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <div>
-          <label htmlFor="codigo" style={{ display: 'block', marginBottom: '5px' }}>Código de Validação:</label>
           <input
             type="text"
             id="codigo"
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
-            maxLength="6" // Se o código do banco de dados na sua imagem era 3965, você pode ajustar para "4" se for sempre 4 dígitos
-            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', textAlign: 'center', fontSize: '20px', letterSpacing: '4px' }}
+            maxLength="4"
+            placeholder='9999'
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', textAlign: 'center', fontSize: '20px', letterSpacing: '15px' }}
             required
           />
         </div>

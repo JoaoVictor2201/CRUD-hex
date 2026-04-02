@@ -53,7 +53,7 @@ class UserService:
             algorithm="HS256"
         )
         
-        return {"success": True, "token": token}
+        return {"success": True, "token": token, "nome": user.name}
 
     @staticmethod
     def validate_token(token):

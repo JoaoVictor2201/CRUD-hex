@@ -59,7 +59,8 @@ class UserController:
         if result["success"]:
             return make_response(jsonify({
                 "mensagem": "Login realizado com sucesso",
-                "token": result["token"]
+                "token": result["token"],
+                "nome": result["nome"]
             }), 200)
         else:
             return make_response(jsonify({"erro": result["message"]}), 401)
