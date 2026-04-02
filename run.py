@@ -11,6 +11,7 @@ def create_app():
     init_routes(app)
     return app
 
+<<<<<<< HEAD
 def start_app_with_retry():
     retries = 10
     while retries > 0:
@@ -27,10 +28,9 @@ def start_app_with_retry():
     return None
 
 # NADA de 'app = create_app()' aqui solto!
+=======
+app = create_app()
+>>>>>>> dev
 
 if __name__ == '__main__':
-    app = start_app_with_retry()
-    if app:
-        app.run(host='0.0.0.0', port=5000, debug=True)
-    else:
-        print("Falha crítica: Não foi possível conectar ao banco de dados após várias tentativas.")
+    app.run(debug=True)

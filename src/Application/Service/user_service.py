@@ -1,11 +1,24 @@
 from src.Domain.user import UserDomain
 from src.Infrastructure.Model.user import User
 from src.config.data_base import db 
+from datetime import datetime, timedelta
+import jwt
+import os  
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+SECRET_KEY = os.getenv("SECRET_KEY", "sua-chave-super-secreta")
 
 class UserService:
     @staticmethod
+    def get_all_users():
+        users = db.session.query(User).all()
+        return [UserDomain(user.id, user.name, user.cnpj, user.email, user.celular, user.status, user.code) for user in users]
+    
+    @staticmethod
     def create_user(name, cnpj, email, celular, password, code):
-        user = User(name=name, cnpj=cnpj, email=email, celular=celular, password=password, code=code)
+        password_hash = generate_password_hash(password, method="pbkdf2:sha256", salt_length=16)
+        user = User(name=name, cnpj=cnpj, email=email, celular=celular, password=password_hash, code=code)
         db.session.add(user)
         db.session.commit()       
         
@@ -20,3 +33,61 @@ class UserService:
             db.session.commit()
             return True
         return False
+    
+    @staticmethod
+    def authenticate_user(cnpj, password):
+        user = db.session.query(User).filter(User.cnpj == cnpj).first()
+        if not user or not check_password_hash(user.password, password):
+            return {"success": False, "message": "Credenciais inválidas. CNPJ ou senha incorretos."}
+
+        if user.status != "Ativo":
+            return {"success": False, "message": "Usuário inativo. Por favor, ative sua conta primeiro."}
+        
+        token = jwt.encode(
+            {
+                "user_id": user.id, 
+                "cnpj": user.cnpj, 
+                "exp": datetime.utcnow() + timedelta(hours=1)
+            },
+            SECRET_KEY,
+            algorithm="HS256"
+        )
+        
+        return {"success": True, "token": token}
+
+    @staticmethod
+    def validate_token(token):
+        if not token or not token.startswith("Bearer "):
+            return {"success": False, "message": "Token não fornecido ou mal formatado"}
+        
+        token = token.split(" ")[1]
+        try:
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        
+            return {
+                "success": True, 
+                "user_id": data.get("user_id"),
+            }
+        
+        except Exception as e:
+            return {"success": False, "message": f"Erro: {e}"}
+
+    @staticmethod
+    def update_user(user_id, data_to_update):
+        user = db.session.query(User).filter(User.id == user_id).first()
+        if not user:
+            return {"success": False, "message": "Usuário não encontrado."}
+        
+        if 'nome' in data_to_update:
+            user.name = data_to_update['nome']
+        if 'email' in data_to_update:
+            user.email = data_to_update['email']
+        if 'celular' in data_to_update:
+            user.celular = data_to_update['celular']
+        
+        try:
+            db.session.commit()
+            return {"success": True, "message": "Informações atualizadas com sucesso."}
+        except Exception as e:
+            db.session.rollback()
+            return {"success": False, "message": f"Erro ao atualizar o banco de dados: {str(e)}"}

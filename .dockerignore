@@ -1,7 +1,15 @@
-db/
-
+# Ignorar ambiente virtual
 .venv/
+venv/
+
+# Ignorar arquivos do banco de dados local
+db/
+*.sock
+
+# Ignorar cache do Python
 __pycache__/
 *.pyc
+*.pyo
 
-frontend/node_modules/
+# Ignorar arquivos do Git
+.git/

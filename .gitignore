@@ -24,4 +24,11 @@ frontend/dist/
 .idea/
 
 # OS
+<<<<<<< HEAD
 .DS_Store
+=======
+.DS_Store
+
+# Database volume
+db/
+>>>>>>> dev
