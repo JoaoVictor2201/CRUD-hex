@@ -1,18 +1,15 @@
 import { useState } from 'react';
 
-function CadastroUsuario() {
-  // 1. Criando os estados para guardar o que o usuário digita
-  const [nome, setNome] = useState('');
+function CadastroUsuario({ onCadastroSuccess }) {
+  const [nome, setNome] = useState('')
   const [cnpj, setCnpj] = useState('');
   const [email, setEmail] = useState('');
   const [celular, setCelular] = useState('');
   const [senha, setSenha] = useState('');
 
-  // 2. Função que roda quando o usuário clica em "Cadastrar"
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evita que a página recarregue do zero
+    e.preventDefault();
 
-    // Cria o objeto exatamente com as chaves que o Python espera
     const dadosUsuario = {
       nome: nome,
       cnpj: cnpj,
@@ -22,7 +19,6 @@ function CadastroUsuario() {
     };
 
     try {
-      // Faz o disparo POST para a API Flask rodando no Docker
       const resposta = await fetch('http://localhost:5000/user', {
         method: 'POST',
         headers: {
@@ -34,10 +30,10 @@ function CadastroUsuario() {
       const dados = await resposta.json();
 
       if (resposta.ok) {
-        alert(dados.mensagem); // "User salvo com sucesso"
+        alert(dados.mensagem);
         localStorage.setItem('cnpjAtivacao', cnpj);
-        
-        // Opcional: Limpar os campos após o sucesso
+        if (onCadastroSuccess) onCadastroSuccess();
+    
         setNome('');
         setCnpj('');
         setEmail('');
@@ -52,10 +48,8 @@ function CadastroUsuario() {
     }
   };
 
-  // 3. O visual do formulário (HTML/JSX)
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>Cadastro de Vendedor</h2>
+    <div style={{ maxWidth: '400px', fontFamily: 'sans-serif' }}>
       
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         
