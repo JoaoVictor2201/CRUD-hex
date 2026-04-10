@@ -39,3 +39,7 @@ def init_routes(app):
     @app.route('/product', methods=['POST'])
     def create_product():
         return ProductController.create_product()
+    
+    @app.route('/product', methods=['PUT'])
+    def update_product():
+        return ProductController.update_product()

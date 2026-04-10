@@ -32,3 +32,26 @@ class ProductService:
             "success": True,
             "produto": product
         }
+    
+    def update_product(product_id, data):
+        product = db.session.query(Product).filter(Product.id == product_id).first()
+        if not product:
+            return {"success": False, "message": "Produto não encontrado!"}
+        
+        if 'name' in data:
+            product.name = data['name']
+        if 'image' in data:
+            product.image = data['image']
+        if 'price' in data:
+            product.price = data['price']
+        if 'quantity' in data:
+            product.quantity = data['quantity']
+        if 'status' in data:
+            product.status = data['status']
+
+        try:
+            db.session.commit()
+            return {"success": True, "message": "Informações do produto atualizadas com sucesso."}
+        except Exception as e:
+            db.session.rollback()
+            return {"success": False, "message": f"Erro ao atualizar o banco de dados: {str(e)}"}

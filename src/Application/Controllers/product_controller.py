@@ -42,3 +42,13 @@ class ProductController:
                 "produto": productDomain.to_dict()
             }), 201
         )
+    
+    def update_product():
+        data = request.get_json()
+        product_id = data.get('id')
+        result = ProductService.update_product(product_id, data)
+        
+        if result["success"]:
+                return make_response(jsonify({"mensagem": result["message"]}), 200)
+        else:
+                return make_response(jsonify({"erro": result["message"]}), 400)
